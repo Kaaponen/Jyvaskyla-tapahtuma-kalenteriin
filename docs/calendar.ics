@@ -1,0 +1,89 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Jyväskylän Tapahtumakalenteri//GitHub//
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALDESC:Ajankohtaiset tapahtumat Jyväskylän alueelta - Päivittyy a
+ utomaattisesti
+X-WR-CALNAME:Jyväskylän Tapahtumat
+X-WR-TIMEZONE:Europe/Helsinki
+BEGIN:VEVENT
+SUMMARY:🎭 Jyväskylän Kesäteatteri
+DTSTART:20250827T052708
+DTEND:20250827T075708
+DTSTAMP:20250823T102708Z
+UID:6495103155653858382@jyvaskyla-events.github.io
+DESCRIPTION:Kesäteatterin upea esitys Jyväsjärven rannalla. Kansainväl
+ isesti arvostettu teatteri tarjoaa elämyksiä koko perheelle.\n\n📍 Jyv
+ äskylän Kesäteatteri\, Jyväsjärvi\n🔗 Lähde: Jyväskylän Kesätea
+ tteri\n🌐 Lisätietoja: https://www.jyvaskyla.fi/kesateatteri\n\n📅 Ka
+ lenteri päivitetty: 23.08.2025 10:27
+LOCATION:Jyväskylän Kesäteatteri\, Jyväsjärvi
+URL:https://www.jyvaskyla.fi/kesateatteri
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:🏛️ Alvar Aalto -museo: Arkkitehtuurinäyttely
+DTSTART:20250830T202708
+DTEND:20250831T042708
+DTSTAMP:20250823T102708Z
+UID:739891008852422697@jyvaskyla-events.github.io
+DESCRIPTION:Alvar Aallon suunnittelun salat -näyttely. Tutustu maailmanku
+ ulun arkkitehdin töihin.\n\n📍 Alvar Aalto -museo\, Keskusta\n🔗 Läh
+ de: Alvar Aalto -museo\n🌐 Lisätietoja: https://www.alvaraalto.fi\n\n
+ 📅 Kalenteri päivitetty: 23.08.2025 10:27
+LOCATION:Alvar Aalto -museo\, Keskusta
+URL:https://www.alvaraalto.fi
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:🎵 Jyväskylän Sinfonia: Kevätkonsertti
+DTSTART:20250905T052708
+DTEND:20250905T072708
+DTSTAMP:20250823T102708Z
+UID:7401901523182287537@jyvaskyla-events.github.io
+DESCRIPTION:Klassinen konsertti Jyväskylän kulttuuritalossa. Ohjelmassa 
+ Sibelius ja Grieg.\n\n📍 Jyväskylän kulttuuritalo\n🔗 Lähde: Jyväs
+ kylän Sinfonia\n🌐 Lisätietoja: https://www.jso.fi\n\n📅 Kalenteri p
+ äivitetty: 23.08.2025 10:27
+LOCATION:Jyväskylän kulttuuritalo
+URL:https://www.jso.fi
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:🏊‍♀️ Lutakko: Uintikoulu alkaa
+DTSTART:20250829T042708
+DTEND:20250829T052708
+DTSTAMP:20250823T102708Z
+UID:4654995306632263621@jyvaskyla-events.github.io
+DESCRIPTION:Aikuisten uintikoulu alkaa Lutakon liikuntakeskuksessa. Ilmoit
+ tautuminen käynnissä.\n\n📍 Lutakon Liikuntakeskus\n🔗 Lähde: Jyvä
+ skylän liikunta\n🌐 Lisätietoja: https://www.jyvaskyla.fi/liikunta\n\n
+ 📅 Kalenteri päivitetty: 23.08.2025 10:27
+LOCATION:Lutakon Liikuntakeskus
+URL:https://www.jyvaskyla.fi/liikunta
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:📚 Jyväskylän pääkirjasto: Kirjailijan tapaaminen
+DTSTART:20250902T042708
+DTEND:20250902T055708
+DTSTAMP:20250823T102708Z
+UID:8518991298058320928@jyvaskyla-events.github.io
+DESCRIPTION:Paikallinen kirjailija kertoo uusimmasta teoksestaan. Keskuste
+ lua ja kahvia.\n\n📍 Jyväskylän pääkirjasto\n🔗 Lähde: Jyväskyl
+ än kirjasto\n🌐 Lisätietoja: https://www.jyvaskyla.fi/kirjasto\n\n📅
+  Kalenteri päivitetty: 23.08.2025 10:27
+LOCATION:Jyväskylän pääkirjasto
+URL:https://www.jyvaskyla.fi/kirjasto
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:🌿 Jyväskylän Yliopisto: Luontoretki
+DTSTART:20250907T002708
+DTEND:20250907T032708
+DTSTAMP:20250823T102708Z
+UID:2234669422612527232@jyvaskyla-events.github.io
+DESCRIPTION:Opastettu luontoretki Jyväskylän ympäristössä. Tutustutaa
+ n paikalliseen luontoon.\n\n📍 Tapaaminen yliopistolla\n🔗 Lähde: Jyv
+ äskylän yliopisto\n🌐 Lisätietoja: https://www.jyu.fi\n\n📅 Kalente
+ ri päivitetty: 23.08.2025 10:27
+LOCATION:Tapaaminen yliopistolla
+URL:https://www.jyu.fi
+END:VEVENT
+END:VCALENDAR

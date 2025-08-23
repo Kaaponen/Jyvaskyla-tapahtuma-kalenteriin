@@ -1,0 +1,60 @@
+{
+  "updated": "2025-08-23T10:27:08.454843",
+  "count": 6,
+  "events": [
+    {
+      "title": "🎭 Jyväskylän Kesäteatteri",
+      "description": "Kesäteatterin upea esitys Jyväsjärven rannalla. Kansainvälisesti arvostettu teatteri tarjoaa elämyksiä koko perheelle.",
+      "start_date": "2025-08-27T05:27:08.441350",
+      "end_date": "2025-08-27T07:57:08.441350",
+      "location": "Jyväskylän Kesäteatteri, Jyväsjärvi",
+      "url": "https://www.jyvaskyla.fi/kesateatteri",
+      "source": "Jyväskylän Kesäteatteri"
+    },
+    {
+      "title": "🏛️ Alvar Aalto -museo: Arkkitehtuurinäyttely",
+      "description": "Alvar Aallon suunnittelun salat -näyttely. Tutustu maailmankuulun arkkitehdin töihin.",
+      "start_date": "2025-08-30T20:27:08.441350",
+      "end_date": "2025-08-31T04:27:08.441350",
+      "location": "Alvar Aalto -museo, Keskusta",
+      "url": "https://www.alvaraalto.fi",
+      "source": "Alvar Aalto -museo"
+    },
+    {
+      "title": "🎵 Jyväskylän Sinfonia: Kevätkonsertti",
+      "description": "Klassinen konsertti Jyväskylän kulttuuritalossa. Ohjelmassa Sibelius ja Grieg.",
+      "start_date": "2025-09-05T05:27:08.441350",
+      "end_date": "2025-09-05T07:27:08.441350",
+      "location": "Jyväskylän kulttuuritalo",
+      "url": "https://www.jso.fi",
+      "source": "Jyväskylän Sinfonia"
+    },
+    {
+      "title": "🏊‍♀️ Lutakko: Uintikoulu alkaa",
+      "description": "Aikuisten uintikoulu alkaa Lutakon liikuntakeskuksessa. Ilmoittautuminen käynnissä.",
+      "start_date": "2025-08-29T04:27:08.441350",
+      "end_date": "2025-08-29T05:27:08.441350",
+      "location": "Lutakon Liikuntakeskus",
+      "url": "https://www.jyvaskyla.fi/liikunta",
+      "source": "Jyväskylän liikunta"
+    },
+    {
+      "title": "📚 Jyväskylän pääkirjasto: Kirjailijan tapaaminen",
+      "description": "Paikallinen kirjailija kertoo uusimmasta teoksestaan. Keskustelua ja kahvia.",
+      "start_date": "2025-09-02T04:27:08.441350",
+      "end_date": "2025-09-02T05:57:08.441350",
+      "location": "Jyväskylän pääkirjasto",
+      "url": "https://www.jyvaskyla.fi/kirjasto",
+      "source": "Jyväskylän kirjasto"
+    },
+    {
+      "title": "🌿 Jyväskylän Yliopisto: Luontoretki",
+      "description": "Opastettu luontoretki Jyväskylän ympäristössä. Tutustutaan paikalliseen luontoon.",
+      "start_date": "2025-09-07T00:27:08.441350",
+      "end_date": "2025-09-07T03:27:08.441350",
+      "location": "Tapaaminen yliopistolla",
+      "url": "https://www.jyu.fi",
+      "source": "Jyväskylän yliopisto"
+    }
+  ]
+}

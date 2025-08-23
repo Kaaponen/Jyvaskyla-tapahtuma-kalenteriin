@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📅 Jyväskylän Tapahtumakalenteri</title>
+    <meta name="description" content="Tilaa Jyväskylän tapahtumat suoraan omaan kalenteriisi. Päivittyy automaattisesti!">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subscribe-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .url-box {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            margin: 15px 0;
+            word-break: break-all;
+            font-size: 0.9em;
+        }
+        
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        
+        .copy-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .platforms {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .platform {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .platform h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .events-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .event {
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            background: #f8f9fa;
+            border-radius: 0 10px 10px 0;
+            transition: transform 0.2s;
+        }
+        
+        .event:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .event-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .event-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .event-description {
+            color: #555;
+            margin-top: 10px;
+        }
+        
+        .badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .download-btn {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: background 0.3s;
+        }
+        
+        .download-btn:hover {
+            background: #218838;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header { padding: 25px 20px; }
+            .header h1 { font-size: 2em; }
+            .event-meta { flex-direction: column; gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Jyväskylän Tapahtumakalenteri</h1>
+            <p>Tilaa kalenteri ja pysy ajan tasalla Jyväskylän tapahtumista!</p>
+            <p>🔄 Päivittyy automaattisesti GitHub Actionseilla</p>
+        </div>
+
+        <div class="subscribe-section">
+            <h2>🔗 Tilaa kalenteri</h2>
+            <p>Kopioi alla oleva URL ja lisää se kalenteriisi:</p>
+            
+            <div class="url-box">
+                <span id="calendar-url">https://Kaaponen.github.io/jyvaskyla-tapahtumat/calendar.ics</span>
+                <button class="copy-btn" onclick="copyToClipboard()">📋 Kopioi</button>
+            </div>
+            
+            <a href="https://Kaaponen.github.io/jyvaskyla-tapahtumat/calendar.ics" class="download-btn" download="jyvaskyla_tapahtumat.ics">
+                ⬇️ Lataa kalenteri (.ics)
+            </a>
+
+            <div class="platforms">
+                <div class="platform">
+                    <h4>📱 Google Kalenteri</h4>
+                    <ol>
+                        <li>Avaa Google Kalenteri</li>
+                        <li>Klikkaa "+" → "Tilaa URL:stä"</li>
+                        <li>Liitä yllä oleva URL</li>
+                    </ol>
+                </div>
+                
+                <div class="platform">
+                    <h4>💼 Outlook</h4>
+                    <ol>
+                        <li>Avaa Outlook</li>
+                        <li>"Lisää kalenteri" → "Tilaa internetistä"</li>
+                        <li>Syötä URL ja nimi</li>
+                    </ol>
+                </div>
+                
+                <div class="platform">
+                    <h4>🍎 Apple Kalenteri</h4>
+                    <ol>
+                        <li>Asetukset → Kalenteri → Tilit</li>
+                        <li>"Lisää tili" → "Muu" → "Tilaa kalenteri"</li>
+                        <li>Syötä URL</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="events-section">
+            <h2>🎭 Tulevat tapahtumat (6 kpl)</h2>
+            <p><small>📅 Viimeksi päivitetty: 23.08.2025 10:27</small></p>
+            
+            
+            <div class="event">
+                <div class="event-title">🎭 Jyväskylän Kesäteatteri</div>
+                <div class="event-meta">
+                    <span>📅 27.08.2025 05:27</span>
+                    <span>📍 Jyväskylän Kesäteatteri, Jyväsjärvi</span>
+                    <span class="badge">Jyväskylän Kesäteatteri</span>
+                </div>
+                <div class="event-description">Kesäteatterin upea esitys Jyväsjärven rannalla. Kansainvälisesti arvostettu teatteri tarjoaa elämyksiä koko perheelle.</div>
+            </div>
+            
+            <div class="event">
+                <div class="event-title">🏊‍♀️ Lutakko: Uintikoulu alkaa</div>
+                <div class="event-meta">
+                    <span>📅 29.08.2025 04:27</span>
+                    <span>📍 Lutakon Liikuntakeskus</span>
+                    <span class="badge">Jyväskylän liikunta</span>
+                </div>
+                <div class="event-description">Aikuisten uintikoulu alkaa Lutakon liikuntakeskuksessa. Ilmoittautuminen käynnissä.</div>
+            </div>
+            
+            <div class="event">
+                <div class="event-title">🏛️ Alvar Aalto -museo: Arkkitehtuurinäyttely</div>
+                <div class="event-meta">
+                    <span>📅 30.08.2025 20:27</span>
+                    <span>📍 Alvar Aalto -museo, Keskusta</span>
+                    <span class="badge">Alvar Aalto -museo</span>
+                </div>
+                <div class="event-description">Alvar Aallon suunnittelun salat -näyttely. Tutustu maailmankuulun arkkitehdin töihin.</div>
+            </div>
+            
+            <div class="event">
+                <div class="event-title">📚 Jyväskylän pääkirjasto: Kirjailijan tapaaminen</div>
+                <div class="event-meta">
+                    <span>📅 02.09.2025 04:27</span>
+                    <span>📍 Jyväskylän pääkirjasto</span>
+                    <span class="badge">Jyväskylän kirjasto</span>
+                </div>
+                <div class="event-description">Paikallinen kirjailija kertoo uusimmasta teoksestaan. Keskustelua ja kahvia.</div>
+            </div>
+            
+            <div class="event">
+                <div class="event-title">🎵 Jyväskylän Sinfonia: Kevätkonsertti</div>
+                <div class="event-meta">
+                    <span>📅 05.09.2025 05:27</span>
+                    <span>📍 Jyväskylän kulttuuritalo</span>
+                    <span class="badge">Jyväskylän Sinfonia</span>
+                </div>
+                <div class="event-description">Klassinen konsertti Jyväskylän kulttuuritalossa. Ohjelmassa Sibelius ja Grieg.</div>
+            </div>
+            
+            <div class="event">
+                <div class="event-title">🌿 Jyväskylän Yliopisto: Luontoretki</div>
+                <div class="event-meta">
+                    <span>📅 07.09.2025 00:27</span>
+                    <span>📍 Tapaaminen yliopistolla</span>
+                    <span class="badge">Jyväskylän yliopisto</span>
+                </div>
+                <div class="event-description">Opastettu luontoretki Jyväskylän ympäristössä. Tutustutaan paikalliseen luontoon.</div>
+            </div>
+            
+            
+            
+        </div>
+
+        <div class="footer">
+            <p>🤖 Automaattisesti päivittyvä kalenteri</p>
+            <p>Powered by GitHub Actions | 
+               <a href="https://github.com/Kaaponen/Jyvaskyla-tapahtuma-kalenteriin" style="color: rgba(255,255,255,0.8);">
+                   📦 Lähdekoodi GitHubissa
+               </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            const url = document.getElementById('calendar-url').textContent;
+            navigator.clipboard.writeText(url).then(function() {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = '✅ Kopioitu!';
+                setTimeout(() => {
+                    btn.textContent = '📋 Kopioi';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
