@@ -1,0 +1,39 @@
+# GitHub Repository rakenne Jyväskylän tapahtumakalenterille
+
+# === TIEDOSTO: .github/workflows/update-calendar.yml ===
+name: Päivitä Tapahtumakalenteri
+
+on:
+  schedule:
+    # Päivitä joka tunti
+    - cron: '0 * * * *'
+  workflow_dispatch: # Mahdollistaa manuaalisen käynnistyksen
+  push:
+    branches: [ main ]
+
+jobs:
+  update-calendar:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests icalendar feedparser beautifulsoup4 lxml
+    
+    - name: Hae ja luo kalenteri
+      run: python scripts/generate_calendar.py
+    
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add docs/
+        git diff --staged --quiet || git commit -m "Päivitetty kalenteri $(date)"
+        git push
