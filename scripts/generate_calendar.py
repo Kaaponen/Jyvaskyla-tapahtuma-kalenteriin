@@ -61,9 +61,6 @@ class GitHubCalendarGenerator:
         # 3. Jyväskylän kaupungin sivut (muu scraping)
         self.fetch_jyvaskyla_events()
         
-        # 4. Lisää esimerkkitapahtumat
-        self.add_sample_events()
-        
         print(f"✅ Löydettiin {len(self.events)} tapahtumaa")
         
     def fetch_jyvaskyla_official(self):
