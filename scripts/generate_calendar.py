@@ -23,18 +23,200 @@ class GitHubCalendarGenerator:
         """Hakee tapahtumat eri lähteistä"""
         print("🔄 Haetaan tapahtumia...")
         
-        # 1. RSS-syötteet (jos saatavilla)
+        # 1. Jyväskylän virallinen kalenteri (UUSI!)
+        self.fetch_jyvaskyla_official()
+        
+        # 2. RSS-syötteet (jos saatavilla)
         self.fetch_rss_events()
         
-        # 2. Jyväskylän kaupungin sivut (scraping)
+        # 3. Jyväskylän kaupungin sivut (muu scraping)
         self.fetch_jyvaskyla_events()
         
-        # 3. Lisää esimerkkitapahtumat
+        # 4. Lisää esimerkkitapahtumat
         self.add_sample_events()
         
         print(f"✅ Löydettiin {len(self.events)} tapahtumaa")
         
-    def fetch_rss_events(self):
+    def fetch_jyvaskyla_official(self):
+        """Hakee tapahtumat Jyväskylän virallisesta kalenterista (kalenteri.jyvaskyla.fi)"""
+        try:
+            print("🏛️ Haetaan Jyväskylän virallisesta kalenterista...")
+            
+            # Kokeile ensin API-endpointteja
+            api_endpoints = [
+                "https://kalenteri.jyvaskyla.fi/api/events",
+                "https://kalenteri.jyvaskyla.fi/api/tapahtumat",
+                "https://kalenteri.jyvaskyla.fi/events.json",
+                "https://kalenteri.jyvaskyla.fi/feed"
+            ]
+            
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (compatible; JKLEventsBot/1.0)',
+                'Accept': 'application/json, text/html'
+            }
+            
+            # Kokeile API:ja
+            for api_url in api_endpoints:
+                try:
+                    response = requests.get(api_url, headers=headers, timeout=10)
+                    if response.status_code == 200:
+                        try:
+                            data = response.json()
+                            events_data = data if isinstance(data, list) else data.get('events', data.get('data', []))
+                            
+                            for event_item in events_data:
+                                event = self.parse_jyvaskyla_event(event_item)
+                                if event:
+                                    self.events.append(event)
+                            
+                            print(f"✅ API {api_url} toimii - löydettiin tapahtumia")
+                            return
+                        except:
+                            continue
+                except:
+                    continue
+            
+            # Jos API:t eivät toimi, scrapaa pääsivu
+            self.scrape_jyvaskyla_official()
+            
+        except Exception as e:
+            print(f"❌ Jyväskylän virallisen kalenterin haku epäonnistui: {e}")
+    
+    def parse_jyvaskyla_event(self, event_data):
+        """Parsii Jyväskylän virallisen kalenterin tapahtuman"""
+        try:
+            if not isinstance(event_data, dict):
+                return None
+                
+            # Yleisiä kenttiä
+            title = None
+            for field in ['title', 'name', 'nimi', 'otsikko', 'summary']:
+                if field in event_data and event_data[field]:
+                    title = str(event_data[field]).strip()
+                    break
+            
+            if not title:
+                return None
+            
+            event = {
+                'title': f"🏛️ {title}",
+                'description': '',
+                'location': 'Jyväskylä',
+                'url': 'https://kalenteri.jyvaskyla.fi',
+                'source': 'Jyväskylän kaupunki'
+            }
+            
+            # Kuvaus
+            for field in ['description', 'kuvaus', 'content', 'details']:
+                if field in event_data and event_data[field]:
+                    event['description'] = str(event_data[field]).strip()
+                    break
+            
+            # Päivämäärä
+            for field in ['start_date', 'date', 'pvm', 'alkaa', 'start_time', 'datetime']:
+                if field in event_data and event_data[field]:
+                    event['start_date'] = self.parse_date(event_data[field])
+                    break
+            
+            # Paikka
+            for field in ['location', 'paikka', 'venue', 'address']:
+                if field in event_data and event_data[field]:
+                    event['location'] = str(event_data[field]).strip()
+                    break
+            
+            # URL
+            for field in ['url', 'link', 'more_info']:
+                if field in event_data and event_data[field]:
+                    url = str(event_data[field]).strip()
+                    if url.startswith('/'):
+                        event['url'] = 'https://kalenteri.jyvaskyla.fi' + url
+                    elif url.startswith('http'):
+                        event['url'] = url
+                    break
+            
+            return event
+            
+        except Exception as e:
+            print(f"❌ Jyväskylän tapahtuman parsiminen epäonnistui: {e}")
+            return None
+    
+    def scrape_jyvaskyla_official(self):
+        """Scrapaa kalenteri.jyvaskyla.fi sivua"""
+        try:
+            headers = {'User-Agent': 'Mozilla/5.0 (compatible; JKLEventsBot/1.0)'}
+            response = requests.get('https://kalenteri.jyvaskyla.fi', headers=headers, timeout=15)
+            
+            if response.status_code == 200:
+                from bs4 import BeautifulSoup
+                soup = BeautifulSoup(response.content, 'html.parser')
+                
+                # Etsi tapahtuma-elementtejä
+                event_elements = soup.select('.event, .tapahtuma, article, .item, [data-event]')
+                
+                for element in event_elements:
+                    try:
+                        # Etsi otsikko
+                        title_elem = element.select_one('h1, h2, h3, h4, .title, .otsikko, a')
+                        if not title_elem:
+                            continue
+                        
+                        title = title_elem.get_text().strip()
+                        if len(title) < 5:
+                            continue
+                        
+                        event = {
+                            'title': f"🏛️ {title}",
+                            'description': '',
+                            'location': 'Jyväskylä',
+                            'url': 'https://kalenteri.jyvaskyla.fi',
+                            'source': 'Jyväskylän kaupunki'
+                        }
+                        
+                        # Etsi päivämäärä
+                        date_elem = element.select_one('time, .date, .pvm')
+                        if date_elem:
+                            date_text = date_elem.get('datetime') or date_elem.get_text()
+                            event['start_date'] = self.parse_date(date_text)
+                        
+                        # Etsi kuvaus
+                        desc_elem = element.select_one('.description, .kuvaus, p')
+                        if desc_elem:
+                            desc = desc_elem.get_text().strip()
+                            if len(desc) > 20:
+                                event['description'] = desc
+                        
+                        # Etsi linkki
+                        link_elem = element.select_one('a[href]')
+                        if link_elem:
+                            href = link_elem.get('href')
+                            if href and href.startswith('/'):
+                                event['url'] = 'https://kalenteri.jyvaskyla.fi' + href
+                        
+                        if self.is_valid_event(event):
+                            self.events.append(event)
+                    
+                    except Exception as e:
+                        continue
+                
+                print(f"✅ Scrapattiin kalenteri.jyvaskyla.fi - löydettiin tapahtumia")
+                
+        except Exception as e:
+            print(f"❌ kalenteri.jyvaskyla.fi scraping epäonnistui: {e}")
+    
+    def is_valid_event(self, event):
+        """Tarkistaa onko tapahtuma validi"""
+        if not event.get('title') or len(event['title']) < 5:
+            return False
+        
+        # Suodata pois navigaatio yms.
+        invalid_keywords = ['menu', 'navigation', 'footer', 'cookie', 'sivusto']
+        title_lower = event['title'].lower()
+        
+        for keyword in invalid_keywords:
+            if keyword in title_lower:
+                return False
+        
+        return True
         """Hakee tapahtumat RSS-syötteistä"""
         rss_feeds = [
             # Lisää oikeat RSS-URLit tähän kun löytyy
@@ -64,7 +246,7 @@ class GitHubCalendarGenerator:
             
             # Kokeile eri API-endpointtejä
             api_urls = [
-                "https://kalenteri.jyvaskyla.fi",  # Hypoteettinen API
+                "https://api.jyvaskyla.fi/events",  # Hypoteettinen API
                 # Lisää muita kun löydät
             ]
             
@@ -81,69 +263,6 @@ class GitHubCalendarGenerator:
                     
         except Exception as e:
             print(f"❌ Jyväskylän API-haku epäonnistui: {e}")
-    
-    def add_sample_events(self):
-        """Lisää esimerkkitapahtumia"""
-        now = datetime.now()
-        
-        sample_events = [
-            {
-                'title': '🎭 Jyväskylän Kesäteatteri',
-                'description': 'Kesäteatterin upea esitys Jyväsjärven rannalla. Kansainvälisesti arvostettu teatteri tarjoaa elämyksiä koko perheelle.',
-                'start_date': now + timedelta(days=3, hours=19),
-                'end_date': now + timedelta(days=3, hours=21, minutes=30),
-                'location': 'Jyväskylän Kesäteatteri, Jyväsjärvi',
-                'url': 'https://www.jyvaskyla.fi/kesateatteri',
-                'source': 'Jyväskylän Kesäteatteri'
-            },
-            {
-                'title': '🏛️ Alvar Aalto -museo: Arkkitehtuurinäyttely',
-                'description': 'Alvar Aallon suunnittelun salat -näyttely. Tutustu maailmankuulun arkkitehdin töihin.',
-                'start_date': now + timedelta(days=7, hours=10),
-                'end_date': now + timedelta(days=7, hours=18),
-                'location': 'Alvar Aalto -museo, Keskusta',
-                'url': 'https://www.alvaraalto.fi',
-                'source': 'Alvar Aalto -museo'
-            },
-            {
-                'title': '🎵 Jyväskylän Sinfonia: Kevätkonsertti',
-                'description': 'Klassinen konsertti Jyväskylän kulttuuritalossa. Ohjelmassa Sibelius ja Grieg.',
-                'start_date': now + timedelta(days=12, hours=19),
-                'end_date': now + timedelta(days=12, hours=21),
-                'location': 'Jyväskylän kulttuuritalo',
-                'url': 'https://www.jso.fi',
-                'source': 'Jyväskylän Sinfonia'
-            },
-            {
-                'title': '🏊‍♀️ Lutakko: Uintikoulu alkaa',
-                'description': 'Aikuisten uintikoulu alkaa Lutakon liikuntakeskuksessa. Ilmoittautuminen käynnissä.',
-                'start_date': now + timedelta(days=5, hours=18),
-                'end_date': now + timedelta(days=5, hours=19),
-                'location': 'Lutakon Liikuntakeskus',
-                'url': 'https://www.jyvaskyla.fi/liikunta',
-                'source': 'Jyväskylän liikunta'
-            },
-            {
-                'title': '📚 Jyväskylän pääkirjasto: Kirjailijan tapaaminen',
-                'description': 'Paikallinen kirjailija kertoo uusimmasta teoksestaan. Keskustelua ja kahvia.',
-                'start_date': now + timedelta(days=9, hours=18),
-                'end_date': now + timedelta(days=9, hours=19, minutes=30),
-                'location': 'Jyväskylän pääkirjasto',
-                'url': 'https://www.jyvaskyla.fi/kirjasto',
-                'source': 'Jyväskylän kirjasto'
-            },
-            {
-                'title': '🌿 Jyväskylän Yliopisto: Luontoretki',
-                'description': 'Opastettu luontoretki Jyväskylän ympäristössä. Tutustutaan paikalliseen luontoon.',
-                'start_date': now + timedelta(days=14, hours=14),
-                'end_date': now + timedelta(days=14, hours=17),
-                'location': 'Tapaaminen yliopistolla',
-                'url': 'https://www.jyu.fi',
-                'source': 'Jyväskylän yliopisto'
-            }
-        ]
-        
-        self.events.extend(sample_events)
     
     def parse_date(self, date_str):
         """Parsii päivämäärän"""
