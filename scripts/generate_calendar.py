@@ -64,7 +64,7 @@ class GitHubCalendarGenerator:
             
             # Kokeile eri API-endpointtejä
             api_urls = [
-                "https://api.jyvaskyla.fi/events",  # Hypoteettinen API
+                "https://kalenteri.jyvaskyla.fi",  # Hypoteettinen API
                 # Lisää muita kun löydät
             ]
             
