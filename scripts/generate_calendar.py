@@ -14,7 +14,36 @@ class GitHubCalendarGenerator:
     def __init__(self):
         self.events = []
         self.docs_dir = "docs"
-        
+        self.config_dir = "config"
+        self.urls = self.load_urls()
+
+    def load_urls(self):
+        """Lataa URL-osoitteet config-tiedostosta"""
+        try:
+            config_path = os.path.join(self.config_dir, 'urls.json')
+            os.makedirs(self.config_dir, exist_ok=True)
+            
+            if not os.path.exists(config_path):
+                default_urls = {
+                    "rss_feeds": [],
+                    "scrape_urls": [
+                        "https://www.jyvaskyla.fi/tapahtumat",
+                        "https://visitjyvaskyla.fi/tapahtumat"
+                    ],
+                    "api_endpoints": [
+                        "https://kalenteri.jyvaskyla.fi/api/events"
+                    ]
+                }
+                with open(config_path, 'w', encoding='utf-8') as f:
+                    json.dump(default_urls, f, indent=4, ensure_ascii=False)
+                return default_urls
+                
+            with open(config_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"⚠️ Virhe URL-konfiguraation lataamisessa: {e}")
+            return {"rss_feeds": [], "scrape_urls": [], "api_endpoints": []}
+
     def ensure_docs_dir(self):
         """Varmistaa että docs-kansio on olemassa"""
         os.makedirs(self.docs_dir, exist_ok=True)
@@ -38,25 +67,17 @@ class GitHubCalendarGenerator:
         print(f"✅ Löydettiin {len(self.events)} tapahtumaa")
         
     def fetch_jyvaskyla_official(self):
-        """Hakee tapahtumat Jyväskylän virallisesta kalenterista (kalenteri.jyvaskyla.fi)"""
+        """Hakee tapahtumat Jyväskylän virallisesta kalenterista"""
         try:
             print("🏛️ Haetaan Jyväskylän virallisesta kalenterista...")
-            
-            # Kokeile ensin API-endpointteja
-            api_endpoints = [
-                "https://kalenteri.jyvaskyla.fi/api/events",
-                "https://kalenteri.jyvaskyla.fi/api/tapahtumat",
-                "https://kalenteri.jyvaskyla.fi/events.json",
-                "https://kalenteri.jyvaskyla.fi/feed"
-            ]
             
             headers = {
                 'User-Agent': 'Mozilla/5.0 (compatible; JKLEventsBot/1.0)',
                 'Accept': 'application/json, text/html'
             }
             
-            # Kokeile API:ja
-            for api_url in api_endpoints:
+            # Käytä konfiguraatiosta ladattuja API-endpointteja
+            for api_url in self.urls.get('api_endpoints', []):
                 try:
                     response = requests.get(api_url, headers=headers, timeout=10)
                     if response.status_code == 200:
@@ -217,13 +238,10 @@ class GitHubCalendarGenerator:
                 return False
         
         return True
+    
+    def fetch_rss_events(self):
         """Hakee tapahtumat RSS-syötteistä"""
-        rss_feeds = [
-            # Lisää oikeat RSS-URLit tähän kun löytyy
-            # "https://www.jyvaskyla.fi/rss/tapahtumat",
-        ]
-        
-        for feed_url in rss_feeds:
+        for feed_url in self.urls.get('rss_feeds', []):
             try:
                 feed = feedparser.parse(feed_url)
                 for entry in feed.entries:
@@ -235,34 +253,119 @@ class GitHubCalendarGenerator:
                         'url': entry.get('link', ''),
                         'source': 'RSS Feed'
                     })
+                print(f"✅ RSS-syöte haettu: {feed_url}")
             except Exception as e:
                 print(f"❌ RSS-syöte {feed_url} epäonnistui: {e}")
-    
+
     def fetch_jyvaskyla_events(self):
-        """Hakee tapahtumat Jyväskylän sivuilta (yksinkertainen scraping)"""
+        """Hakee tapahtumat Jyväskylän sivuilta (scraping)"""
         try:
-            # Tämä on esimerkki - muokkaa oikeisiin API-endpointteihin
             headers = {'User-Agent': 'Mozilla/5.0 (compatible; JyvaskylaEventsBot/1.0)'}
             
-            # Kokeile eri API-endpointtejä
-            api_urls = [
-                "https://api.jyvaskyla.fi/events",  # Hypoteettinen API
-                # Lisää muita kun löydät
+            # Käytä konfiguraatiosta ladattuja scrape-URLeja
+            for url in self.urls.get('scrape_urls', []):
+                try:
+                    print(f"🔍 Haetaan tapahtumia: {url}")
+                    response = requests.get(url, headers=headers, timeout=15)
+                    
+                    if response.status_code == 200:
+                        from bs4 import BeautifulSoup
+                        soup = BeautifulSoup(response.content, 'html.parser')
+                        
+                        # Yleisiä tapahtuma-containereiden luokkia
+                        event_selectors = [
+                            '.event-item',
+                            '.event-list',
+                            '.tapahtuma',
+                            '.event-container',
+                            'article',
+                            '.calendar-event',
+                            '[data-type="event"]'
+                        ]
+                        
+                        for selector in event_selectors:
+                            events = soup.select(selector)
+                            if events:
+                                for event_elem in events:
+                                    event = self.parse_scraped_event(event_elem, base_url=url)
+                                    if event and self.is_valid_event(event):
+                                        self.events.append(event)
+                                
+                                print(f"✅ Löydettiin tapahtumia: {url}")
+                                break
+                    
+                except Exception as e:
+                    print(f"⚠️ Virhe scrapattaessa {url}: {e}")
+                    continue
+                
+        except Exception as e:
+            print(f"❌ Tapahtumien haku epäonnistui: {e}")
+    
+    def parse_scraped_event(self, event_elem, base_url):
+        """Parsii scrapattua tapahtumaa"""
+        try:
+            # Etsi otsikko
+            title = None
+            title_elem = event_elem.select_one('h1, h2, h3, h4, .title, .event-title, a')
+            if title_elem:
+                title = title_elem.get_text().strip()
+            
+            if not title or len(title) < 3:
+                return None
+                
+            event = {
+                'title': f"📅 {title}",
+                'description': '',
+                'location': 'Jyväskylä',
+                'url': base_url,
+                'source': 'Jyväskylän tapahtumat'
+            }
+            
+            # Etsi päivämäärä
+            date_selectors = [
+                'time',
+                '.date',
+                '.datetime',
+                '.event-date',
+                '[datetime]'
             ]
             
-            for api_url in api_urls:
-                try:
-                    response = requests.get(api_url, headers=headers, timeout=10)
-                    if response.status_code == 200:
-                        # Tämä riippuu API:n rakenteesta
-                        data = response.json()
-                        # Käsittele data...
-                        print(f"✅ API {api_url} toimii")
-                except:
-                    print(f"⚠️  API {api_url} ei saatavilla")
+            for selector in date_selectors:
+                date_elem = event_elem.select_one(selector)
+                if date_elem:
+                    date_text = date_elem.get('datetime') or date_elem.get_text()
+                    parsed_date = self.parse_date(date_text)
+                    if parsed_date:
+                        event['start_date'] = parsed_date
+                        break
+            
+            # Etsi kuvaus
+            desc_elem = event_elem.select_one('.description, .content, .event-description, p')
+            if desc_elem:
+                event['description'] = desc_elem.get_text().strip()
+                
+            # Etsi paikka
+            location_elem = event_elem.select_one('.location, .place, .venue, .event-location')
+            if location_elem:
+                location = location_elem.get_text().strip()
+                if location:
+                    event['location'] = location
                     
+            # Etsi URL
+            url_elem = event_elem.select_one('a[href]')
+            if url_elem:
+                href = url_elem.get('href', '')
+                if href:
+                    if href.startswith('/'):
+                        event['url'] = urljoin(base_url, href)
+                    elif href.startswith('http'):
+                        event['url'] = href
+                        
+            return event
+            
         except Exception as e:
-            print(f"❌ Jyväskylän API-haku epäonnistui: {e}")
+            print(f"❌ Virhe tapahtuman parsimisessa: {e}")
+            return None
     
     def parse_date(self, date_str):
         """Parsii päivämäärän"""

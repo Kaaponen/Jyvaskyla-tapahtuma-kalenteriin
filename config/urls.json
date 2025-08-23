@@ -1,0 +1,14 @@
+{
+  "rss_feeds": ["https://www.jyvaskyla.fi/rss/tapahtumat"],
+  "scrape_urls": [
+    "https://www.jyvaskyla.fi/tapahtumat",
+    "https://visitjyvaskyla.fi/tapahtumat",
+    "https://www.jyvaskylanseutu.fi/tapahtumat"
+  ],
+  "api_endpoints": [
+    "https://kalenteri.jyvaskyla.fi/api/events",
+    "https://kalenteri.jyvaskyla.fi/api/tapahtumat",
+    "https://kalenteri.jyvaskyla.fi/events.json",
+    "https://kalenteri.jyvaskyla.fi/feed"
+  ]
+}
