@@ -1,5 +1,15 @@
 {
-  "updated": "2026-11-05T08:01:32.090247",
-  "count": 0,
-  "events": []
+  "updated": "2026-11-05T09:01:22.348618",
+  "count": 1,
+  "events": [
+    {
+      "title": "📅 Keski-Suomen tapahtumat",
+      "description": "Kesäisiä tunnelmia Jyväskylästä ja Keski-Suomesta.",
+      "start_date": null,
+      "end_date": null,
+      "location": "Jyväskylä",
+      "url": "https://visitjyvaskyla.fi/rallyfinland/",
+      "source": "Jyväskylän tapahtumat"
+    }
+  ]
 }
