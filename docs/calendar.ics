@@ -9,12 +9,12 @@ X-WR-CALNAME:Jyväskylän Tapahtumat
 X-WR-TIMEZONE:Europe/Helsinki
 BEGIN:VEVENT
 SUMMARY:📅 Keski-Suomen tapahtumat
-DTSTAMP:20261106T200109Z
-UID:3440644665329922581@jyvaskyla-events.github.io
+DTSTAMP:20261106T210108Z
+UID:8046489034103526751@jyvaskyla-events.github.io
 DESCRIPTION:Kesäisiä tunnelmia Jyväskylästä ja Keski-Suomesta.\n\n
  📍 Jyväskylä\n🔗 Lähde: Jyväskylän tapahtumat\n🌐 Lisätietoja:
   https://visitjyvaskyla.fi/rallyfinland/\n\n📅 Kalenteri päivitetty: 06
- .11.2026 20:01
+ .11.2026 21:01
 LOCATION:Jyväskylä
 URL:https://visitjyvaskyla.fi/rallyfinland/
 END:VEVENT
